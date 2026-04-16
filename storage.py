@@ -55,8 +55,9 @@ def add_sent_post(link, sent_posts):
         link (str): 발송한 글의 링크
         sent_posts (dict): 발송 기록
     """
-    # UTC 시간으로 저장 (타임존 포함)
-    sent_posts[link] = datetime.now(timezone.utc).isoformat()
+    # KST 시간으로 저장 (UTC+9)
+    kst = timezone(timedelta(hours=9))
+    sent_posts[link] = datetime.now(kst).isoformat()
 
 
 def clean_old_records(sent_posts, days=7):
@@ -70,13 +71,21 @@ def clean_old_records(sent_posts, days=7):
     Returns:
         dict: 정리된 발송 기록
     """
-    # UTC 기준으로 계산
-    cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
+    # KST 기준으로 계산 (UTC+9)
+    kst = timezone(timedelta(hours=9))
+    cutoff_date = datetime.now(kst) - timedelta(days=days)
     cleaned = {}
 
     for link, sent_time in sent_posts.items():
         try:
             sent_datetime = datetime.fromisoformat(sent_time)
+
+            # 타임존 정보가 없는 경우 (기존 데이터)
+            # UTC로 가정하고 KST로 변환
+            if sent_datetime.tzinfo is None:
+                sent_datetime = sent_datetime.replace(tzinfo=timezone.utc)
+                sent_datetime = sent_datetime.astimezone(kst)
+
             if sent_datetime > cutoff_date:
                 # 최근 기록만 유지
                 cleaned[link] = sent_time
