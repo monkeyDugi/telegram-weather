@@ -1,2 +1,25 @@
+# 환경변수 (민감 정보)
 .env
-sent.json
+
+# 가상환경
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 로그
+*.log
+
+# macOS
+.DS_Store

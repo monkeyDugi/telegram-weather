@@ -7,7 +7,7 @@ TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
 GEEKNEWS_URL = "https://news.hada.io"
-POINT_THRESHOLD = 40
+POINT_THRESHOLD = 20
 SENT_FILE = "sent.json"
 
 if __name__ == "__main__":

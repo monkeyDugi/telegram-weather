@@ -1,0 +1,46 @@
+name: Daily GeekNews Alert
+
+on:
+  # 매일 아침 7시 자동 실행 (한국시간)
+  schedule:
+    - cron: '0 22 * * *'  # UTC 22:00 = KST 07:00 (다음날)
+
+  # 수동 실행 (테스트용)
+  workflow_dispatch:
+
+
+jobs:
+  send-geeknews-alert:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+    
+    - name: Python 설정
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+        cache: 'pip'
+    
+    - name: 라이브러리 설치
+      run: |
+        pip install -r requirements.txt
+    
+    - name: GeekNews 봇 실행
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        python main.py
+    
+    - name: 발송 기록 커밋 (sent.json)
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        
+        if [ -f sent.json ]; then
+          git add sent.json
+          git diff --staged --quiet || git commit -m "chore: 발송 기록 업데이트 [skip ci]"
+          git push
+        fi
