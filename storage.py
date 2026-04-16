@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from config import SENT_FILE
 
 
@@ -55,7 +55,8 @@ def add_sent_post(link, sent_posts):
         link (str): 발송한 글의 링크
         sent_posts (dict): 발송 기록
     """
-    sent_posts[link] = datetime.now().isoformat()
+    # UTC 시간으로 저장 (타임존 포함)
+    sent_posts[link] = datetime.now(timezone.utc).isoformat()
 
 
 def clean_old_records(sent_posts, days=7):
@@ -69,7 +70,8 @@ def clean_old_records(sent_posts, days=7):
     Returns:
         dict: 정리된 발송 기록
     """
-    cutoff_date = datetime.now() - timedelta(days=days)
+    # UTC 기준으로 계산
+    cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
     cleaned = {}
 
     for link, sent_time in sent_posts.items():
