@@ -12,7 +12,10 @@ on:
 jobs:
   send-geeknews-alert:
     runs-on: ubuntu-latest
-    
+
+    permissions:
+      contents: write  # 저장소 쓰기 권한 부여
+
     steps:
     - name: 코드 체크아웃
       uses: actions/checkout@v4
